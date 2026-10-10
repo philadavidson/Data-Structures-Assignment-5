@@ -7,17 +7,29 @@
 # Output: 3
 
 def most_frequent(numbers):
-    # Your code here
-    pass
+    counts = {}
+    most_common = None
+    highest_count = 0
+
+    for number in numbers:
+        # Increases the number's count, starts at 0 if it's new
+        counts [number] = counts.get(number, 0) + 1
+
+        # Updates the result when this number takes the lead
+        if counts[number] > highest_count:
+            highest_count = counts[number]
+            most_common = number
+
+    return most_common
 
 """
 Time and Space Analysis for problem 1:
-- Best-case:
-- Worst-case:
-- Average-case:
-- Space complexity:
-- Why this approach?
-- Could it be optimized?
+- Best-case: O(n) Even if every number in the dicitonary is identical the loop still processes each element.
+- Worst-case: O(n) Each element is processed once even if every number is unique.
+- Average-case: O(n) Each number requies a dictionary update and comparison so the work grows linearly with the list size.
+- Space complexity: The dictionary stores an entry for every number. In a worst case scenario where every number is unique it makes the space compelexity O(n).
+- Why this approach? Dictionaries allow us to count occurrences without repeatedly searching the list. Keeping track of the most frequent number during the loop also avoids a separate pass over the counts.
+- Could it be optimized? For an unsorted list, this approach already reulst in O(n) time. Sorting could help speed things up but might result with O(n log n) time.
 """
 
 
@@ -29,17 +41,24 @@ Time and Space Analysis for problem 1:
 # Output: [4, 5, 6, 7]
 
 def remove_duplicates(nums):
-    # Your code here
-    pass
+    seen = set()
+    result = []
+
+    for num in nums:
+        if num not in seen:
+            seen.add(num)
+            result.append(num)
+
+    return result
 
 """
 Time and Space Analysis for problem 2:
-- Best-case:
-- Worst-case:
-- Average-case:
-- Space complexity:
-- Why this approach?
-- Could it be optimized?
+- Best-case: O(n) Even if every number is the same we still check each element. 
+- Worst-case: O(n) If every number is unique, each one is checked and added to both the set and the result list.
+- Average-case: O(n) Every number is processed once, so the work grows linearly with the input size.
+- Space complexity: Both the set and result lists store values. In a worst case scenario where all the numbers are unique the space complexity is O(n).
+- Why this approach? This approach allows for fast duplicate checks and preserves the list order. If we only checked the result list that would take O(n) per check, which would make the total runtime O(n^2).
+- Could it be optimized? O(n) is already efficient. list(dict.fromkeys(nums)) would allow for shorter code, but the time and space complexity would be the same.
 """
 
 
@@ -52,17 +71,27 @@ Time and Space Analysis for problem 2:
 # Output: [(1, 4), (2, 3)]
 
 def find_pairs(nums, target):
-    # Your code here
-    pass
+    seen = set()
+    pairs = []
+
+    for num in nums:
+        complement = target - num
+
+        if complement in seen:
+            pairs.append((complement, num))
+
+        seen.add(num)
+
+    return pairs
 
 """
 Time and Space Analysis for problem 3:
-- Best-case:
-- Worst-case:
-- Average-case:
-- Space complexity:
-- Why this approach?
-- Could it be optimized?
+- Best-case: O(n) If there are no matches, every element is still checked.
+- Worst-case: O(n) If every number belongs to a matching pair, we still process every element once.
+- Average-case: O(n) For each number, we calculate its complement and check the set. The amount of work grows linearly with the number of inputs.
+- Space complexity: Since there are no duplicates, the set will eventually store every number.
+- Why this approach? The set checks for each complement O(1) time. If we checked each number with every other number using nested loops we would end up with O(n^2) time.
+- Could it be optimized? Since O(n) is already optimal when every element must be examined. If the list were sorted the process could be sped up.
 """
 
 
@@ -75,16 +104,35 @@ Time and Space Analysis for problem 3:
 # add_n_items(6) → should print when resizing happens.
 
 def add_n_items(n):
-    # Your code here
-    pass
+    capacity = 2
+    items = [None] * capacity
+    size = 0
+
+    for number in range(n):
+        if size == capacity:
+            new_capacity = capacity * 2
+            print(f"Resizing from {capacity} to {new_capacity}")
+
+            new_items = [None] * new_capacity
+
+            for index in range(size):
+                new_items[index] = items[index]
+                print(f"Copying {items[index]}")
+
+            items = new_items
+            capacity = new_capacity
+
+        items[size] = number
+        size += 1
+        print(f"Added {number}")
 
 """
 Time and Space Analysis for problem 4:
-- When do resizes happen?
-- What is the worst-case for a single append?
-- What is the amortized time per append overall?
-- Space complexity:
-- Why does doubling reduce the cost overall?
+- When do resizes happen? Resizes occur when the list is full and an element needs to be added. 
+- What is the worst-case for a single append? When one element needs to be but the list is full, resulting in the entire list being copied over to a new list along with the new append.
+- What is the amortized time per append overall? Adding an element takes O(n) time. So total time is constant based on the number of inputs.
+- Space complexity: Capacity grows proportionally to the number of elements. During resizing, both lists exist temporarily, but eventually total space returns to O(n).
+- Why does doubling reduce the cost overall? Each resize creates more room for insertions before needing to resize again. This avoids having to create new lsits for each insertion.
 """
 
 
@@ -98,15 +146,21 @@ Time and Space Analysis for problem 4:
 # Because: [1, 1+2, 1+2+3, 1+2+3+4]
 
 def running_total(nums):
-    # Your code here
-    pass
+    total = 0
+    result = 0
+
+    for num in nums:
+        total += num
+        result.append(total)
+
+    return result
 
 """
 Time and Space Analysis for problem 5:
-- Best-case:
-- Worst-case:
-- Average-case:
-- Space complexity:
-- Why this approach?
-- Could it be optimized?
+- Best-case: O(n) Easier inputs still require an addition and append for each element.
+- Worst-case: O(n) No inputs cause extra work. Still requires one addition and append for each element.
+- Average-case: The work grows linearly with the inputs, the values don't change how many iterations are needed. 
+- Space complexity: O(n) for the list of running totals. The funciton uses O(1) time.
+- Why this approach? Keeping a running total, this approach avoids having to add up all the previous elements over and over for each new input. 
+- Could it be optimized? O(n) is already optimal since every element must be processed. 
 """
