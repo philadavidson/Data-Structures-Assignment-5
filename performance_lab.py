@@ -271,7 +271,10 @@ def find_pairs2(nums, target):
 
     return pairs
 
-
+"""
+The change is in the if/else statement. Partner found: record the pair and remove the stored partner. No partner yet: store the current number for later.
+Worst-case: O(n) same as before. If no pairs exist, the set still holds all n numbers. The improvement is reduced storage when marches occur.
+"""
 
 # Typical input: two matching pairs
 assert set(find_pairs2([1, 2, 3, 4], 5)) == {(1, 4), (2, 3)}
