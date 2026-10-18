@@ -27,11 +27,27 @@ Time and Space Analysis for problem 1:
 - Best-case: O(n) Even if every number in the dicitonary is identical the loop still processes each element.
 - Worst-case: O(n) Each element is processed once even if every number is unique.
 - Average-case: O(n) Each number requies a dictionary update and comparison so the work grows linearly with the list size.
-- Space complexity: The dictionary stores an entry for every number. In a worst case scenario where every number is unique it makes the space compelexity O(n).
+- Space complexity: O(k), where k is the number of unique integers. The dictionary stores an entry for every number. In a worst case scenario where every number is unique it makes the space compelexity O(n).
 - Why this approach? Dictionaries allow us to count occurrences without repeatedly searching the list. Keeping track of the most frequent number during the loop also avoids a separate pass over the counts.
 - Could it be optimized? For an unsorted list, this approach already reulst in O(n) time. Sorting could help speed things up but might result with O(n log n) time.
 """
 
+# Empty list
+assert most_frequent([]) is None
+
+# Single element
+assert most_frequent([7]) == 7
+
+# All elements identical
+assert most_frequent([4, 4, 4, 4]) == 4
+
+# Negative numbers
+assert most_frequent([-2, -2, 1, 3]) == -2
+
+# Tie: either most-frequent value is acceptable
+assert most_frequent([1, 1, 2, 2, 3]) in (1, 2)
+
+print("Problem 1 tests passed!")
 
 # 🔍 Problem 2: Remove Duplicates While Preserving Order
 # Write a function that returns a list with duplicates removed but preserves order.
@@ -56,11 +72,30 @@ Time and Space Analysis for problem 2:
 - Best-case: O(n) Even if every number is the same we still check each element. 
 - Worst-case: O(n) If every number is unique, each one is checked and added to both the set and the result list.
 - Average-case: O(n) Every number is processed once, so the work grows linearly with the input size.
-- Space complexity: Both the set and result lists store values. In a worst case scenario where all the numbers are unique the space complexity is O(n).
+- Space complexity: O(k), where k is the number of unique values. Both the set and result lists store k values. In a worst case scenario where all the numbers are unique the space complexity is O(n).
 - Why this approach? This approach allows for fast duplicate checks and preserves the list order. If we only checked the result list that would take O(n) per check, which would make the total runtime O(n^2).
 - Could it be optimized? O(n) is already efficient. list(dict.fromkeys(nums)) would allow for shorter code, but the time and space complexity would be the same.
 """
 
+# Empty list
+assert remove_duplicates([]) == []
+
+# Single element
+assert remove_duplicates([7]) == [7]
+
+# All elements identical
+assert remove_duplicates([4, 4, 4, 4]) == [4]
+
+# Negative numbers: keep -2 once, along with 1 and 3
+assert remove_duplicates([-2, -2, 1, 3]) == [-2, 1, 3]
+
+# Positive numbers
+assert remove_duplicates([1, 1, 2, 2, 3]) == [1, 2, 3]
+
+# Preserve the original order rather than sorting
+assert remove_duplicates([4, 5, 4, 6, 5, 7]) == [4, 5, 6, 7]
+
+print("Problem 2 tests passed!")
 
 # 🔍 Problem 3: Return All Pairs That Sum to Target
 # Write a function that returns all unique pairs of numbers in the list that sum to a target.
@@ -89,10 +124,27 @@ Time and Space Analysis for problem 3:
 - Best-case: O(n) If there are no matches, every element is still checked.
 - Worst-case: O(n) If every number belongs to a matching pair, we still process every element once.
 - Average-case: O(n) For each number, we calculate its complement and check the set. The amount of work grows linearly with the number of inputs.
-- Space complexity: Since there are no duplicates, the set will eventually store every number.
+- Space complexity: O(n) Since there are no duplicates, the set will eventually store every number but the runtime would still be O(n).
 - Why this approach? The set checks for each complement O(1) time. If we checked each number with every other number using nested loops we would end up with O(n^2) time.
 - Could it be optimized? Since O(n) is already optimal when every element must be examined. If the list were sorted the process could be sped up.
 """
+
+# Typical input: two matching pairs
+assert set(find_pairs([1, 2, 3, 4], 5)) == {(1, 4), (2, 3)}
+
+# Empty list
+assert find_pairs([], 5) == []
+
+# Single element: cannot pair with itself
+assert find_pairs([3], 6) == []
+
+# No matching pairs
+assert find_pairs([1, 2, 3], 10) == []
+
+# Negative numbers
+assert set(find_pairs([-3, -2, 1, 4], 1)) == {(-3, 4)}
+
+print("Problem 3 tests passed!")
 
 
 # 🔍 Problem 4: Simulate List Resizing (Amortized Cost)
@@ -130,10 +182,28 @@ def add_n_items(n):
 Time and Space Analysis for problem 4:
 - When do resizes happen? Resizes occur when the list is full and an element needs to be added. 
 - What is the worst-case for a single append? When one element needs to be but the list is full, resulting in the entire list being copied over to a new list along with the new append.
-- What is the amortized time per append overall? Adding an element takes O(n) time. So total time is constant based on the number of inputs.
-- Space complexity: Capacity grows proportionally to the number of elements. During resizing, both lists exist temporarily, but eventually total space returns to O(n).
+- What is the amortized time per append overall? O(1) Adding n elements takes O(n) time, so spreading that work across n appends gives constant O(1) time per append.
+- Space complexity: O(n) Capacity grows proportionally to the number of elements. During resizing, both lists exist temporarily, but it remains O(n) even while both lists exist.
 - Why does doubling reduce the cost overall? Each resize creates more room for insertions before needing to resize again. This avoids having to create new lsits for each insertion.
+- Average-case: O(1) per append. Most insertions place the new element into available space without resizing. Occasional resizing takes O(n) because existing elements must be copied.
 """
+
+# No items: should print nothing.
+add_n_items(0)
+
+# Below capacity: adds 0 without resizing.
+add_n_items(1)
+
+# Exactly at capacity: adds 0 and 1 without resizing.
+add_n_items(2)
+
+# Exceeds capacity: resizes from 2 to 4 and copies 0 and 1.
+add_n_items(3)
+
+# Multiple resizes: resizes from 2 to 4, then 4 to 8.
+# Should add all six numbers, 0 through 5.
+add_n_items(6)
+
 
 
 # 🔍 Problem 5: Compute Running Totals
@@ -147,7 +217,7 @@ Time and Space Analysis for problem 4:
 
 def running_total(nums):
     total = 0
-    result = 0
+    result = []
 
     for num in nums:
         total += num
@@ -159,8 +229,63 @@ def running_total(nums):
 Time and Space Analysis for problem 5:
 - Best-case: O(n) Easier inputs still require an addition and append for each element.
 - Worst-case: O(n) No inputs cause extra work. Still requires one addition and append for each element.
-- Average-case: The work grows linearly with the inputs, the values don't change how many iterations are needed. 
-- Space complexity: O(n) for the list of running totals. The funciton uses O(1) time.
+- Average-case: O(n) The work grows linearly with the inputs, the values don't change how many iterations are needed. 
+- Space complexity: O(n) for the list of running totals. Aside form the output list, funciton uses O(1) extra space.
 - Why this approach? Keeping a running total, this approach avoids having to add up all the previous elements over and over for each new input. 
 - Could it be optimized? O(n) is already optimal since every element must be processed. 
 """
+
+# Single element
+assert running_total([1]) == [1]
+
+# Typical input
+assert running_total([1, 2, 3, 4]) == [1, 3, 6, 10]
+
+# Empty list
+assert running_total([]) == []
+
+# Negative numbers and zero
+assert running_total([3, -2, 0, 4]) == [3, 1, 1, 5]
+
+print("Problem 5 tests passed!")
+
+
+# Problem 3 - REFACTORED
+
+def find_pairs2(nums, target):
+    # Space optimization: seen now stores only unmatched numbers.
+    # Originally, seen kept every input number, including matched ones.
+    # Both versions take O(n) time and O(n) worst-case space,
+    # but this version stores fewer numbers when pairs are found.
+    seen = set()
+    pairs = []
+
+    for num in nums:
+        complement = target - num
+
+        if complement in seen:
+            pairs.append((complement, num))
+            seen.remove(complement)
+        else:
+            seen.add(num)
+
+    return pairs
+
+
+
+# Typical input: two matching pairs
+assert set(find_pairs2([1, 2, 3, 4], 5)) == {(1, 4), (2, 3)}
+
+# Empty list
+assert find_pairs2([], 5) == []
+
+# Single element: cannot pair with itself
+assert find_pairs2([3], 6) == []
+
+# No matching pairs
+assert find_pairs2([1, 2, 3], 10) == []
+
+# Negative numbers
+assert set(find_pairs2([-3, -2, 1, 4], 1)) == {(-3, 4)}
+
+print("Problem 3 REFACTORED tests passed!")
